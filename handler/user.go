@@ -271,5 +271,17 @@ func (user *UserHandler) ChangePassword(ID string, data *model.ChangePassword) e
 		err := fmt.Errorf("error updating user's record %v", err)
 		return err
 	}
+
+	//Send email to the user
+	var body = "Password changed successfully"
+
+	record := model.Email{
+		To:   us.Email,
+		Body: body,
+	}
+	if err := email.SendEmail(record); err != nil {
+		err := fmt.Errorf("error sending an email %v", err)
+		return err
+	}
 	return nil
 }
