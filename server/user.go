@@ -144,3 +144,18 @@ func (user UserServer) ChangePassword() gin.HandlerFunc {
 		context.JSON(http.StatusOK, gin.H{"status": "user's changed successfully", "code": 200})
 	}
 }
+
+func (user UserServer) VerifyPhoneNumber() gin.HandlerFunc {
+	return func(context *gin.Context) {
+		phone := context.Query("phone_number")
+		id := context.Query("id")
+
+		//Call handler to process the request
+		if err := user.user.VerifyNumber(id, phone); err != nil {
+			context.JSON(http.StatusInternalServerError, gin.H{"error": err, "code": 500, "status": "internal server error"})
+			return
+		}
+		context.JSON(http.StatusOK, gin.H{"code": 200, "status": "code was successfully sent to a user"})
+		return
+	}
+}

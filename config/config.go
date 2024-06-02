@@ -21,6 +21,8 @@ const (
 	gomailHostName = "GOMAI_NAME"
 	gomailPort     = "GOMAIL_PORT"
 	gmailPassword  = "GMAIL_PASSWORD"
+	accountSid     = "ACCOUNT_SID"
+	authToken      = "AUTH_TOKEN"
 )
 
 type source interface {
@@ -77,6 +79,8 @@ type Config struct {
 	GomailName    string
 	GomailPort    int
 	GmailPassword string
+	AccountSid    string
+	AuthToken     string
 }
 
 func ImportConfig(source source) Config {
@@ -98,6 +102,8 @@ func ImportConfig(source source) Config {
 	gomailName := source.GetEnv(gomailHostName, "smtp.gmail.com")
 	gomailPort := source.GetEnvInt(gomailPort, 587)
 	gmailPass := source.GetEnv(gmailPassword, "fywtgbzlwqksolrr")
+	accountSid := source.GetEnv(accountSid, "AC38ad1aaba69dbec742dc553854e04041")
+	authToken := source.GetEnv(authToken, "00c4e9d61c68ccc10d600ebd6d99e5d7")
 
 	return Config{
 		AppEnv:        appEnv,
@@ -113,5 +119,7 @@ func ImportConfig(source source) Config {
 		GomailName:    gomailName,
 		GomailPort:    gomailPort,
 		GmailPassword: gmailPass,
+		AccountSid:    accountSid,
+		AuthToken:     authToken,
 	}
 }

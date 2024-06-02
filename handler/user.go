@@ -126,7 +126,30 @@ func (user *UserHandler) UpdateUser(ID string, data *model.User) error {
 	return nil
 }
 
-func (user *UserHandler) VerifyNumber(data *model.User) error {
+func (user *UserHandler) VerifyNumber(ID, phoneNumber string) error {
+	//Ensure the user's record exist
+	_, err := user.store.GetUserByID(ID)
+	if err != nil {
+		err := fmt.Errorf("error updating user's record %v", err)
+		return err
+	}
+
+	//Generate an OTP for a user
+	code, err := helper.GenerateOTP()
+	if err != nil {
+		err := fmt.Errorf("error generating OTP for a user %v", err)
+		return err
+	}
+
+	//Prepare an SMS
+	rec := model.VerifyPhoneNumber{
+		Body: code,
+		From: phoneNumber, //We need to buy a phone number
+	}
+	if err := helper.VerifyNumber(rec); err != nil {
+		err := fmt.Errorf("error verifying phone number %v", err)
+		return err
+	}
 	return nil
 }
 
@@ -249,5 +272,4 @@ func (user *UserHandler) ChangePassword(ID string, data *model.ChangePassword) e
 		return err
 	}
 	return nil
-
 }
