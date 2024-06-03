@@ -10,6 +10,10 @@ import (
 	"math/big"
 )
 
+const (
+	PhoneNumber = "BUY_ME_PHONE_NUMBER"
+)
+
 // GenerateOTP generates a 6-digit one-time password
 func GenerateOTP() (string, error) {
 	// Define the range for the OTP
@@ -37,7 +41,7 @@ func VerifyNumber(data model.VerifyPhoneNumber) error {
 
 	params := &api.CreateMessageParams{}
 	params.SetBody(data.Body)
-	params.SetFrom(data.From)
+	params.SetFrom(PhoneNumber)
 	params.SetTo(data.To)
 
 	resp, err := client.Api.CreateMessage(params)
