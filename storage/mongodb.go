@@ -141,5 +141,6 @@ func (repo *MongoStore) buildUserPayload(newUser, oldUser *model.User) *model.Us
 		oldUser.ConfirmPassword = newUser.ConfirmPassword
 
 	}
+
 	return oldUser
 }
