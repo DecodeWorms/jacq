@@ -5,6 +5,7 @@ import (
 	"jacq/handler"
 	"jacq/model"
 	"net/http"
+	"strings"
 )
 
 type UserServer struct {
@@ -183,10 +184,24 @@ func (user UserServer) ChangeTransactionPin() gin.HandlerFunc {
 func (user UserServer) VerifyToken() gin.HandlerFunc {
 	return func(context *gin.Context) {
 		id := context.Query("id")
-		token := context.Query("token")
+
+		authHeader := context.GetHeader("Authorization")
+		if authHeader == "" {
+			context.JSON(http.StatusUnauthorized, gin.H{"error": "Authorization header is required", "code": 401})
+			context.Abort()
+			return
+		}
+
+		// Extract the token from the Authorization header
+		tokenString := strings.TrimPrefix(authHeader, "Bearer ")
+		if tokenString == authHeader {
+			context.JSON(http.StatusUnauthorized, gin.H{"error": "Authorization header format must be Bearer {token}"})
+			context.Abort()
+			return
+		}
 
 		//Call handler to process the request
-		if err := user.user.VerifyOtp(id, token); err != nil {
+		if err := user.user.VerifyOtp(id, tokenString); err != nil {
 			context.JSON(http.StatusInternalServerError, gin.H{"code": 500, "status": "Internal server error", "error": err.Error()})
 			return
 		}

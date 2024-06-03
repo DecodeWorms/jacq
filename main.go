@@ -44,7 +44,7 @@ func main() {
 	router.PUT("/change_password", server.ChangePassword())
 	router.POST("/verify_phone_number", server.VerifyPhoneNumber())
 	router.PUT("/change_pin", server.ChangeTransactionPin())
-	router.POST("/verify_otp", server.VerifyToken())
+	router.POST("/verify_token", server.VerifyToken())
 
 	//Graceful shut down
 	interruptHandler := make(chan os.Signal, 1)
@@ -66,17 +66,17 @@ func main() {
 
 }
 
-/*
-// Configurations for CORS
-	confg := cors.DefaultConfig()
-	confg.AllowAllOrigins = true
-	confg.AllowHeaders = []string{"Authorization", "Origin", "Content-Length", "Content-Type", "User-Agent", "Referrer", "Host", "Access-Control-Allow-Origin", "XMLHttpRequest", "*"}
-	confg.ExposeHeaders = []string{"Content-Length"}
-	confg.AllowMethods = []string{"GET", "POST", "OPTIONS", "PUT", "PATCH", "DELETE"}
-	confg.AllowCredentials = true
+/*Configurations for CORS
+confg := cors.DefaultConfig()
+confg.AllowAllOrigins = true
+confg.AllowHeaders = []string{"Authorization", "Origin", "Content-Length", "Content-Type", "User-Agent", "Referrer", "Host", "Access-Control-Allow-Origin", "XMLHttpRequest", "*"}
+confg.ExposeHeaders = []string{"Content-Length"}
+confg.AllowMethods = []string{"GET", "POST", "OPTIONS", "PUT", "PATCH", "DELETE"}
+confg.AllowCredentials = true
 
-	router := gin.New()
-	router.Use(cors.New(confg))
-	router.Use(gin.Logger())
-	router.Use(gin.Recovery())
+router := gin.New()
+router.Use(cors.New(confg))
+router.Use(gin.Logger())
+router.Use(gin.Recovery())
+
 */
