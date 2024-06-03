@@ -13,7 +13,7 @@ func GenerateAccessToken(uId, email string) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"email":   email,
 		"user_id": uId,
-		"exp":     time.Now().UTC().Add(time.Minute * 60).Unix(),
+		"exp":     time.Now().UTC().Add(time.Minute * 6).Unix(),
 	})
 	tokenString, err := token.SignedString([]byte("secret"))
 	if err != nil {

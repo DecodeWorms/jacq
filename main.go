@@ -44,6 +44,7 @@ func main() {
 	router.PUT("/change_password", server.ChangePassword())
 	router.POST("/verify_phone_number", server.VerifyPhoneNumber())
 	router.PUT("/change_pin", server.ChangeTransactionPin())
+	router.POST("/verify_otp", server.VerifyToken())
 
 	//Graceful shut down
 	interruptHandler := make(chan os.Signal, 1)

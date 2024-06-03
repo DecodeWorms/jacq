@@ -142,11 +142,8 @@ func (user *UserHandler) VerifyNumber(ID, phoneNumber string) error {
 		Body: code,
 		From: phoneNumber, //We need to buy a phone number
 	}
-	if err := helper.VerifyNumber(rec); err != nil {
-		err := fmt.Errorf("error verifying phone number %v", err)
-		return err
-	}
-	return nil
+
+	return helper.VerifyNumber(rec)
 }
 
 func (user *UserHandler) VerifyBvn(data *model.User) error {
@@ -321,4 +318,15 @@ func (user *UserHandler) ChangeTransactionPin(ID string, data *model.Transaction
 		Body: "Pin changed successfully",
 	}
 	return email.SendPinChangedSuccessfully(d)
+}
+
+func (user *UserHandler) VerifyOtp(ID, authToken string) error {
+	//Ensure user's record is available
+	_, err := user.store.GetUserByID(ID)
+	if err != nil {
+		err := fmt.Errorf("error user's record is not available %v", nil)
+		return err
+	}
+	//Verify the OTP
+	return generator.ValidateAccessToken(authToken)
 }
