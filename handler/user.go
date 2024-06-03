@@ -88,11 +88,7 @@ func (user *UserHandler) SendVerificationLink(userEmail, link string) error {
 		Body: emailBody,
 	}
 
-	if err := email.SendEmailVerification(data); err != nil {
-		err := fmt.Errorf("error sending email %v", err)
-		return err
-	}
-	return nil
+	return email.SendEmailVerification(data)
 }
 
 func (user *UserHandler) UpdateUser(ID string, data *model.User) error {
@@ -226,11 +222,7 @@ func (user *UserHandler) ForgotPassword(data *model.User) error {
 		To:   trimedEmail,
 		Body: body,
 	}
-	if err := email.SendEmailVerification(record); err != nil {
-		err := fmt.Errorf("error sending an email %v", err)
-		return err
-	}
-	return nil
+	return email.SendEmailVerification(record)
 }
 
 func (user *UserHandler) ChangePassword(ID string, data *model.ChangePassword) error {
@@ -279,11 +271,7 @@ func (user *UserHandler) ChangePassword(ID string, data *model.ChangePassword) e
 		To:   us.Email,
 		Body: body,
 	}
-	if err := email.SendPasswordChangedSuccessfully(record); err != nil {
-		err := fmt.Errorf("error sending an email %v", err)
-		return err
-	}
-	return nil
+	return email.SendPasswordChangedSuccessfully(record)
 }
 
 func (user *UserHandler) ChangeTransactionPin(ID string, data *model.TransactionPin) error {
@@ -333,5 +321,4 @@ func (user *UserHandler) ChangeTransactionPin(ID string, data *model.Transaction
 		Body: "Pin changed successfully",
 	}
 	return email.SendPinChangedSuccessfully(d)
-
 }
