@@ -5,6 +5,7 @@ import (
 	"jacq/handler"
 	"jacq/model"
 	"net/http"
+	"strings"
 )
 
 type UserServer struct {
@@ -106,7 +107,7 @@ func (user UserServer) Login() gin.HandlerFunc {
 			context.JSON(http.StatusInternalServerError, gin.H{"error": err.Error(), "code": 500, "status": "Internal server error"})
 			return
 		}
-		context.JSON(http.StatusOK, gin.H{"status": "user's successful logged in", "accessToken": resp, "code": 200})
+		context.JSON(http.StatusOK, gin.H{"status": "user login successfully", "accessToken": resp, "code": 200})
 	}
 }
 
@@ -178,5 +179,32 @@ func (user UserServer) ChangeTransactionPin() gin.HandlerFunc {
 		context.JSON(http.StatusOK, gin.H{"code": 200, "status": "code was successfully sent to a user"})
 		return
 	}
+}
 
+func (user UserServer) VerifyToken() gin.HandlerFunc {
+	return func(context *gin.Context) {
+		id := context.Query("id")
+
+		authHeader := context.GetHeader("Authorization")
+		if authHeader == "" {
+			context.JSON(http.StatusUnauthorized, gin.H{"error": "Authorization header is required", "code": 401})
+			context.Abort()
+			return
+		}
+
+		// Extract the token from the Authorization header
+		tokenString := strings.TrimPrefix(authHeader, "Bearer ")
+		if tokenString == authHeader {
+			context.JSON(http.StatusUnauthorized, gin.H{"error": "Authorization header format must be Bearer {token}"})
+			context.Abort()
+			return
+		}
+
+		//Call handler to process the request
+		if err := user.user.VerifyOtp(id, tokenString); err != nil {
+			context.JSON(http.StatusInternalServerError, gin.H{"code": 500, "status": "Internal server error", "error": err.Error()})
+			return
+		}
+		context.JSON(http.StatusOK, gin.H{"code": 200, "status": "Otp is verified"})
+	}
 }
