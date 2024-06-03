@@ -141,7 +141,7 @@ func (user UserServer) ChangePassword() gin.HandlerFunc {
 			context.JSON(http.StatusInternalServerError, gin.H{"error": err.Error(), "code": 500, "status": "Internal server error"})
 			return
 		}
-		context.JSON(http.StatusOK, gin.H{"status": "user's changed successfully", "code": 200})
+		context.JSON(http.StatusOK, gin.H{"status": "user's password changed successfully", "code": 200})
 	}
 }
 

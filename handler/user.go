@@ -88,7 +88,7 @@ func (user *UserHandler) SendVerificationLink(userEmail, link string) error {
 		Body: emailBody,
 	}
 
-	if err := email.SendEmail(data); err != nil {
+	if err := email.SendEmailVerification(data); err != nil {
 		err := fmt.Errorf("error sending email %v", err)
 		return err
 	}
@@ -226,7 +226,7 @@ func (user *UserHandler) ForgotPassword(data *model.User) error {
 		To:   trimedEmail,
 		Body: body,
 	}
-	if err := email.SendEmail(record); err != nil {
+	if err := email.SendEmailVerification(record); err != nil {
 		err := fmt.Errorf("error sending an email %v", err)
 		return err
 	}
@@ -279,7 +279,7 @@ func (user *UserHandler) ChangePassword(ID string, data *model.ChangePassword) e
 		To:   us.Email,
 		Body: body,
 	}
-	if err := email.SendEmail(record); err != nil {
+	if err := email.SendPasswordChangedSuccessfully(record); err != nil {
 		err := fmt.Errorf("error sending an email %v", err)
 		return err
 	}
