@@ -43,6 +43,7 @@ func main() {
 	router.POST("/forgot_password", server.ForgotPassword())
 	router.PUT("/change_password", server.ChangePassword())
 	router.POST("/verify_phone_number", server.VerifyPhoneNumber())
+	router.PUT("/change_pin", server.ChangeTransactionPin())
 
 	//Graceful shut down
 	interruptHandler := make(chan os.Signal, 1)

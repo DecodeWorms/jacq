@@ -159,3 +159,24 @@ func (user UserServer) VerifyPhoneNumber() gin.HandlerFunc {
 		return
 	}
 }
+
+func (user UserServer) ChangeTransactionPin() gin.HandlerFunc {
+	return func(context *gin.Context) {
+		id := context.Query("id")
+		var tranPin model.TransactionPin
+
+		if err := context.ShouldBindJSON(&tranPin); err != nil {
+			context.JSON(http.StatusBadRequest, gin.H{"code": 400, "status": "Bad request"})
+			return
+		}
+
+		//Call handler to process the request
+		if err := user.user.ChangeTransactionPin(id, &tranPin); err != nil {
+			context.JSON(http.StatusInternalServerError, gin.H{"error": err, "code": 500, "status": "internal server error"})
+			return
+		}
+		context.JSON(http.StatusOK, gin.H{"code": 200, "status": "code was successfully sent to a user"})
+		return
+	}
+
+}

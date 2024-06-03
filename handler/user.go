@@ -285,3 +285,53 @@ func (user *UserHandler) ChangePassword(ID string, data *model.ChangePassword) e
 	}
 	return nil
 }
+
+func (user *UserHandler) ChangeTransactionPin(ID string, data *model.TransactionPin) error {
+	//Ensure that user's record exist
+	us, err := user.store.GetUserByID(ID)
+	if err != nil {
+		err := fmt.Errorf("error user's record not exist %v", err)
+		return err
+	}
+	//Compare user current pin with the user database existing pin
+	if us.TransactionCode != data.CurrentPin {
+		err := fmt.Errorf("error user's record pin does match current pin supplied %v", nil)
+		return err
+	}
+
+	//Ensure that both newPin and ConfirmNewPin are not empty
+	if data.NewPin == 0 || data.ConfirmNewPin == 0 {
+		err := fmt.Errorf("error user's newPin and ConfirmNewPin are empty %v", nil)
+		return err
+	}
+
+	//Ensure both the newPin and confirmNewPin are the same
+	if data.NewPin != data.NewPin {
+		err := fmt.Errorf("error user's newPin and ConfirmNewPin are not matched %v", nil)
+		return err
+	}
+
+	//Ensure that newPin is not the same as currentPin
+	if data.NewPin == data.CurrentPin {
+		err := fmt.Errorf("error user's newPin and CurrentPin are not same %v", nil)
+		return err
+	}
+
+	//Update the user's transaction pin
+	rec := &model.User{
+		TransactionCode: data.NewPin,
+	}
+	_, err = user.store.UpdateUser(ID, rec)
+	if err != nil {
+		err := fmt.Errorf("error updating user transaction pin %v", nil)
+		return err
+	}
+
+	//Send user an email for pin successfully changed
+	d := model.Email{
+		To:   us.Email,
+		Body: "Pin changed successfully",
+	}
+	return email.SendPinChangedSuccessfully(d)
+
+}
