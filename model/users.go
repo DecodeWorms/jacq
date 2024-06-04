@@ -17,6 +17,7 @@ type User struct {
 	PhoneNumber     string    `json:"phone_number" bson:"phone_number"`
 	Bvn             string    `json:"bvn" bson:"bvn"`
 	IDType          string    `json:"IDType" bson:"IDType"`
+	Document        string    `json:"document" bson:"document"`
 	TransactionCode int       `json:"transaction_code" bson:"transaction_code"`
 	StatusTimeStamp time.Time `json:"status_ts" bson:"status_ts"`
 	Timestamp       time.Time `json:"ts" bson:"ts"`

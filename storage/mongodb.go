@@ -146,5 +146,13 @@ func (repo *MongoStore) buildUserPayload(newUser, oldUser *model.User) *model.Us
 		oldUser.DateOfBirth = newUser.DateOfBirth
 	}
 
+	if newUser.IDType != "" {
+		oldUser.IDType = newUser.IDType
+	}
+
+	if newUser.Document != "" {
+		oldUser.Document = newUser.Document
+	}
+
 	return oldUser
 }

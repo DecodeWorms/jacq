@@ -12,6 +12,7 @@ import (
 
 const (
 	PhoneNumber = "BUY_ME_PHONE_NUMBER"
+	Url         = "https://vapi.verifyme.ng/v1/verifications/bvn"
 )
 
 // GenerateOTP generates a 6-digit one-time password

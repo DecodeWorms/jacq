@@ -1,7 +1,10 @@
 package handler
 
 import (
+	"bytes"
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"jacq/email"
 	"jacq/encrypt"
 	"jacq/generator"
@@ -9,6 +12,7 @@ import (
 	"jacq/idgenerator"
 	"jacq/model"
 	"jacq/storage"
+	"net/http"
 	"strings"
 )
 
@@ -146,7 +150,77 @@ func (user *UserHandler) VerifyNumber(ID, phoneNumber string) error {
 	return helper.VerifyNumber(rec)
 }
 
-func (user *UserHandler) VerifyBvn(data *model.User) error {
+func (user *UserHandler) VerifyBvn(ID string, data *model.User) error {
+	//Ensure that user's record is available
+	_, err := user.store.GetUserByID(ID)
+	if err != nil {
+		err := fmt.Errorf("error user's record not found %v", err)
+		return err
+	}
+	//https://vapi.verifyme.ng/v1/verifications/identities/bvn/10000000001 This is url from VerifyMe doc
+	method := "POST"
+	payload := map[string]string{
+		"bvn": data.Bvn,
+	}
+	payloadBytes, err := json.Marshal(payload)
+	if err != nil {
+		err := fmt.Errorf("error marshaling payload %v", err)
+		return err
+	}
+
+	body := bytes.NewBuffer(payloadBytes)
+	//Initialize the http request
+	client := &http.Client{}
+	req, err := http.NewRequest(method, helper.Url, body)
+	if err != nil {
+		err := fmt.Errorf("error creating http request%v", err)
+		return err
+	}
+
+	//Send the http request
+	res, err := client.Do(req)
+	if err != nil {
+		err := fmt.Errorf("error sending http request %v", err)
+		return err
+	}
+	defer res.Body.Close()
+
+	//Validate if the http was successful
+	if res.StatusCode != http.StatusOK {
+		err := fmt.Errorf("error http request was unsuccessful %v", err)
+		return err
+	}
+
+	//Read the response http response body
+	bodyBytes, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		err := fmt.Errorf("error reading http response body %v", err)
+		return err
+	}
+
+	//Serialize the data from the response body
+	var verifyMeResponse model.VerifyMeResponse
+	err = json.Unmarshal(bodyBytes, &verifyMeResponse)
+	if err != nil {
+		err := fmt.Errorf("error unmarshaling http response %v", err)
+		return err
+	}
+
+	if verifyMeResponse.Status != "success" {
+		err := fmt.Errorf("error bvn verification failed %v", err)
+		return err
+	}
+
+	//If bvn validation is successful then we update the user's record
+	d := &model.User{
+		IDType:   data.IDType,
+		Document: data.Document,
+	}
+	_, err = user.store.UpdateUser(ID, d)
+	if err != nil {
+		err := fmt.Errorf("error updating user's record %v", err)
+		return err
+	}
 	return nil
 }
 

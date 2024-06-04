@@ -23,6 +23,7 @@ const (
 	gmailPassword  = "GMAIL_PASSWORD"
 	accountSid     = "ACCOUNT_SID"
 	authToken      = "AUTH_TOKEN"
+	bvnApiKey      = "BVN_API_KEY"
 )
 
 type source interface {
@@ -81,6 +82,7 @@ type Config struct {
 	GmailPassword string
 	AccountSid    string
 	AuthToken     string
+	BvnApiKey     string
 }
 
 func ImportConfig(source source) Config {
@@ -101,9 +103,10 @@ func ImportConfig(source source) Config {
 	secretKey := source.GetEnv(secretKey, "jacq-jwt-secret-key")
 	gomailName := source.GetEnv(gomailHostName, "smtp.gmail.com")
 	gomailPort := source.GetEnvInt(gomailPort, 587)
-	gmailPass := source.GetEnv(gmailPassword, "fywtgbzlwqksolrr")
-	accountSid := source.GetEnv(accountSid, "AC38ad1aaba69dbec742dc553854e04041")
-	authToken := source.GetEnv(authToken, "00c4e9d61c68ccc10d600ebd6d99e5d7")
+	gmailPass := source.GetEnv(gmailPassword, "")
+	accountSid := source.GetEnv(accountSid, "")
+	authToken := source.GetEnv(authToken, "")
+	bvnApiKey := source.GetEnv(bvnApiKey, "")
 
 	return Config{
 		AppEnv:        appEnv,
@@ -121,5 +124,6 @@ func ImportConfig(source source) Config {
 		GmailPassword: gmailPass,
 		AccountSid:    accountSid,
 		AuthToken:     authToken,
+		BvnApiKey:     bvnApiKey,
 	}
 }

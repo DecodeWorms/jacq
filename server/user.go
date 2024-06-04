@@ -208,3 +208,22 @@ func (user UserServer) VerifyToken() gin.HandlerFunc {
 		context.JSON(http.StatusOK, gin.H{"code": 200, "status": "Otp is verified"})
 	}
 }
+
+func (user UserServer) VerifyBvn() gin.HandlerFunc {
+	return func(context *gin.Context) {
+		id := context.Query("id")
+		var us model.User
+
+		if err := context.ShouldBindJSON(&us); err != nil {
+			context.JSON(http.StatusBadRequest, gin.H{"code": 400, "status": "Bad request", "error": err.Error()})
+			return
+		}
+
+		//Call handler to process the request
+		if err := user.user.VerifyBvn(id, &us); err != nil {
+			context.JSON(http.StatusInternalServerError, gin.H{"code": 500, "status": "Internal server error"})
+			return
+		}
+		context.JSON(http.StatusOK, gin.H{"status": "bvn was successfully verified", "code": 200})
+	}
+}
