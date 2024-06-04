@@ -18,7 +18,7 @@ const (
 // GenerateOTP generates a 6-digit one-time password
 func GenerateOTP() (string, error) {
 	// Define the range for the OTP
-	const otpLength = 6
+	// const otpLength = 6
 	const max = 1000000
 
 	// Generate a secure random number within the range

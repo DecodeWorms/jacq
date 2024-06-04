@@ -157,7 +157,6 @@ func (user UserServer) VerifyPhoneNumber() gin.HandlerFunc {
 			return
 		}
 		context.JSON(http.StatusOK, gin.H{"code": 200, "status": "code was successfully sent to a user"})
-		return
 	}
 }
 
@@ -177,7 +176,6 @@ func (user UserServer) ChangeTransactionPin() gin.HandlerFunc {
 			return
 		}
 		context.JSON(http.StatusOK, gin.H{"code": 200, "status": "code was successfully sent to a user"})
-		return
 	}
 }
 
