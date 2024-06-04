@@ -78,5 +78,4 @@ router := gin.New()
 router.Use(cors.New(confg))
 router.Use(gin.Logger())
 router.Use(gin.Recovery())
-
 */
