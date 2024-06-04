@@ -45,6 +45,7 @@ func main() {
 	router.POST("/verify_phone_number", server.VerifyPhoneNumber())
 	router.PUT("/change_pin", server.ChangeTransactionPin())
 	router.POST("/verify_token", server.VerifyToken())
+	router.POST("/verify_bvn", server.VerifyBvn())
 
 	//Graceful shut down
 	interruptHandler := make(chan os.Signal, 1)
@@ -52,7 +53,7 @@ func main() {
 
 	addr := fmt.Sprintf(":%s", c.ServicePort)
 	go func(addr string) {
-		log.Println(fmt.Sprintf("User API service running on %v. Environment=%s", addr, c.AppEnv))
+		log.Println(fmt.Sprintf("Jacq API service running on %v. Environment=%s", addr, c.AppEnv))
 		if err := http.ListenAndServe(addr, router); err != nil {
 			log.Printf("error starting a server %v", err)
 		}
