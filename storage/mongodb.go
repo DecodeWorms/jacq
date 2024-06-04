@@ -142,5 +142,9 @@ func (repo *MongoStore) buildUserPayload(newUser, oldUser *model.User) *model.Us
 
 	}
 
+	if newUser.DateOfBirth != "" {
+		oldUser.DateOfBirth = newUser.DateOfBirth
+	}
+
 	return oldUser
 }
