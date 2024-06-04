@@ -365,7 +365,7 @@ func (user *UserHandler) ChangeTransactionPin(ID string, data *model.Transaction
 	}
 
 	//Ensure both the newPin and confirmNewPin are the same
-	if data.NewPin != data.NewPin {
+	if data.NewPin != data.ConfirmNewPin {
 		err := fmt.Errorf("error user's newPin and ConfirmNewPin are not matched %v", nil)
 		return err
 	}

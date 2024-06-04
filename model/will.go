@@ -1,11 +1,11 @@
 package model
 
 type Will struct {
-	ID           string `bson:"id" bson:"id"`
+	ID           string `json:"id" bson:"id"`
 	UserID       string `json:"user_id" bson:"user_id"`
 	WitnessName  string `json:"witness_name" bson:"witness_name"`
 	WitnessEmail string `json:"witness_email" bson:"witness_email"`
-	MeetingDate  string `json:"meeting_date" json:"meeting_date"`
+	MeetingDate  string `json:"meeting_date" bson:"meeting_date"`
 	MeetingTime  string `json:"meeting_time" bson:"meeting_time"`
 }
 
