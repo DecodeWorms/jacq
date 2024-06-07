@@ -23,16 +23,17 @@ func (user UserServer) SignUp() gin.HandlerFunc {
 		var u *model.User
 
 		if err := context.ShouldBindJSON(&u); err != nil {
-			context.JSON(http.StatusBadRequest, gin.H{"error": err.Error(), "code": 400, "status": "Bad request"})
+			context.JSON(http.StatusBadRequest, gin.H{"data": handleServerResponse(http.StatusBadRequest, "Invalid client request", "", err.Error(), nil)})
 			return
 		}
 
 		//Call the handler to process the request
 		if err := user.user.CreateUser(u); err != nil {
-			context.JSON(http.StatusInternalServerError, gin.H{"error": err.Error(), "code": 500, "status": "Internal server error"})
+			context.JSON(http.StatusInternalServerError, gin.H{"data": handleServerResponse(http.StatusInternalServerError, "Backend Internal Server error", "", err.Error(), nil)})
 			return
 		}
-		context.JSON(http.StatusOK, gin.H{"status": "user signed up successfully", "code": 200})
+
+		context.JSON(http.StatusOK, gin.H{"data": handleServerResponse(http.StatusOK, "User Created Successfully", "", nil, nil)})
 	}
 }
 
@@ -41,16 +42,16 @@ func (user UserServer) SendVerificationEmail() gin.HandlerFunc {
 		var ver model.VerifyEmail
 
 		if err := context.ShouldBindJSON(&ver); err != nil {
-			context.JSON(http.StatusBadRequest, gin.H{"error": err.Error(), "code": 400, "status": "Bad request"})
+			context.JSON(http.StatusBadRequest, gin.H{"data": handleServerResponse(http.StatusBadRequest, "User Invalid request", "", err.Error(), nil)})
 			return
 		}
 
 		//Call the handler to process the request
 		if err := user.user.SendVerificationLink(ver.Email, ver.Link); err != nil {
-			context.JSON(http.StatusInternalServerError, gin.H{"error": err.Error(), "code": 500, "status": "Internal server error"})
+			context.JSON(http.StatusInternalServerError, gin.H{"data": handleServerResponse(http.StatusInternalServerError, "Backend Internal server error", "", err.Error(), nil)})
 			return
 		}
-		context.JSON(http.StatusOK, gin.H{"status": "email sent out successfully", "code": 200})
+		context.JSON(http.StatusOK, gin.H{"data": handleServerResponse(http.StatusOK, "Verification link sent successfully", "", nil, nil)})
 	}
 }
 
@@ -60,16 +61,16 @@ func (user UserServer) UpdateUser() gin.HandlerFunc {
 		id := context.Query("id")
 
 		if err := context.ShouldBindJSON(&us); err != nil {
-			context.JSON(http.StatusBadRequest, gin.H{"error": err.Error(), "code": 400, "status": "Internal server error"})
+			context.JSON(http.StatusBadRequest, gin.H{"data": handleServerResponse(http.StatusBadRequest, "User Invalid request", "", err.Error(), nil)})
 			return
 		}
 
 		//Call the handler to process the request
 		if err := user.user.UpdateUser(id, &us); err != nil {
-			context.JSON(http.StatusInternalServerError, gin.H{"error": err.Error(), "code": 500, "status": "Internal server error"})
+			context.JSON(http.StatusInternalServerError, gin.H{"data": handleServerResponse(http.StatusInternalServerError, "Backend internal server error", "", err.Error(), nil)})
 			return
 		}
-		context.JSON(http.StatusOK, gin.H{"status": "user's record updated successfully", "code": 200})
+		context.JSON(http.StatusOK, gin.H{"data": handleServerResponse(http.StatusOK, "User's record updated successfully", "", nil, nil)})
 	}
 }
 
@@ -79,16 +80,16 @@ func (user UserServer) SecureTransaction() gin.HandlerFunc {
 		id := context.Query("id")
 
 		if err := context.ShouldBindJSON(&us); err != nil {
-			context.JSON(http.StatusBadRequest, gin.H{"error": err.Error(), "code": 400, "status": "Bad request"})
+			context.JSON(http.StatusBadRequest, gin.H{"data": handleServerResponse(http.StatusBadRequest, "User Invalid Request", "", err.Error(), nil)})
 			return
 		}
 
 		//Call the handler to process the request
 		if err := user.user.SecureTransaction(id, &us); err != nil {
-			context.JSON(http.StatusInternalServerError, gin.H{"error": err.Error(), "code": 500, "status": "Internal server error"})
+			context.JSON(http.StatusInternalServerError, gin.H{"data": handleServerResponse(http.StatusInternalServerError, "Backend Internal server error", "", err.Error(), nil)})
 			return
 		}
-		context.JSON(http.StatusOK, gin.H{"status": "user's transaction code secured successfully", "code": 200})
+		context.JSON(http.StatusOK, gin.H{"data": handleServerResponse(http.StatusOK, "User Transaction created successfully", "", nil, nil)})
 	}
 }
 
@@ -97,17 +98,17 @@ func (user UserServer) Login() gin.HandlerFunc {
 
 		var us model.User
 		if err := context.ShouldBindJSON(&us); err != nil {
-			context.JSON(http.StatusBadRequest, gin.H{"error": err.Error(), "code": 400, "status": "Bad request"})
+			context.JSON(http.StatusBadRequest, gin.H{"data": handleServerResponse(http.StatusBadRequest, "User Invalid Request", "", err.Error(), nil)})
 			return
 		}
 
 		//Call the handler to process the request
-		resp, err := user.user.Login(&us)
+		token, err := user.user.Login(&us)
 		if err != nil {
-			context.JSON(http.StatusInternalServerError, gin.H{"error": err.Error(), "code": 500, "status": "Internal server error"})
+			context.JSON(http.StatusInternalServerError, gin.H{"data": handleServerResponse(http.StatusInternalServerError, "Backend Internal server error", "", err.Error(), nil)})
 			return
 		}
-		context.JSON(http.StatusOK, gin.H{"status": "user login successfully", "accessToken": resp, "code": 200})
+		context.JSON(http.StatusOK, gin.H{"data": handleServerResponse(http.StatusOK, "User has successfully logged in", token, nil, nil)})
 	}
 }
 
@@ -116,14 +117,14 @@ func (user UserServer) ForgotPassword() gin.HandlerFunc {
 		var us model.User
 
 		if err := context.ShouldBindJSON(&us); err != nil {
-			context.JSON(http.StatusBadRequest, gin.H{"error": err.Error(), "code": 400, "status": "Bad request"})
+			context.JSON(http.StatusBadRequest, gin.H{"data": handleServerResponse(http.StatusBadRequest, "User Invalid request", "", err.Error(), nil)})
 			return
 		}
 		if err := user.user.ForgotPassword(&us); err != nil {
-			context.JSON(http.StatusInternalServerError, gin.H{"error": err.Error(), "code": 500, "status": "Internal server error"})
+			context.JSON(http.StatusInternalServerError, gin.H{"data": handleServerResponse(http.StatusInternalServerError, "Backed Internal server error", "", err.Error(), nil)})
 			return
 		}
-		context.JSON(http.StatusOK, gin.H{"code": 200, "status": "link is sent successfully"})
+		context.JSON(http.StatusOK, gin.H{"data": handleServerResponse(http.StatusOK, "User forgot password requested succesfully", "", nil, nil)})
 	}
 }
 
@@ -133,16 +134,16 @@ func (user UserServer) ChangePassword() gin.HandlerFunc {
 		var chanPass model.ChangePassword
 
 		if err := context.ShouldBindJSON(&chanPass); err != nil {
-			context.JSON(http.StatusBadRequest, gin.H{"error": err.Error(), "code": 400, "status": "Bad request"})
+			context.JSON(http.StatusBadRequest, gin.H{"data": handleServerResponse(http.StatusBadRequest, "User Invalid request", "", err.Error(), nil)})
 			return
 		}
 
 		//Call handler to process the request
 		if err := user.user.ChangePassword(userID, &chanPass); err != nil {
-			context.JSON(http.StatusInternalServerError, gin.H{"error": err.Error(), "code": 500, "status": "Internal server error"})
+			context.JSON(http.StatusInternalServerError, gin.H{"data": handleServerResponse(http.StatusInternalServerError, "Backend Internal server error", "", err.Error(), nil)})
 			return
 		}
-		context.JSON(http.StatusOK, gin.H{"status": "user's password changed successfully", "code": 200})
+		context.JSON(http.StatusOK, gin.H{"data": handleServerResponse(http.StatusOK, "User Password changed successfully", "", nil, nil)})
 	}
 }
 
@@ -153,10 +154,10 @@ func (user UserServer) VerifyPhoneNumber() gin.HandlerFunc {
 
 		//Call handler to process the request
 		if err := user.user.VerifyNumber(id, phone); err != nil {
-			context.JSON(http.StatusInternalServerError, gin.H{"error": err, "code": 500, "status": "internal server error"})
+			context.JSON(http.StatusInternalServerError, gin.H{"data": handleServerResponse(http.StatusInternalServerError, "Backend Internal server error", "", err.Error(), nil)})
 			return
 		}
-		context.JSON(http.StatusOK, gin.H{"code": 200, "status": "code was successfully sent to a user"})
+		context.JSON(http.StatusOK, gin.H{"data": handleServerResponse(http.StatusOK, "User number verified successfully", "", nil, nil)})
 	}
 }
 
@@ -166,16 +167,16 @@ func (user UserServer) ChangeTransactionPin() gin.HandlerFunc {
 		var tranPin model.TransactionPin
 
 		if err := context.ShouldBindJSON(&tranPin); err != nil {
-			context.JSON(http.StatusBadRequest, gin.H{"code": 400, "status": "Bad request"})
+			context.JSON(http.StatusBadRequest, gin.H{"data": handleServerResponse(http.StatusBadRequest, "User Invalid request", "", err.Error(), nil)})
 			return
 		}
 
 		//Call handler to process the request
 		if err := user.user.ChangeTransactionPin(id, &tranPin); err != nil {
-			context.JSON(http.StatusInternalServerError, gin.H{"error": err, "code": 500, "status": "internal server error"})
+			context.JSON(http.StatusInternalServerError, gin.H{"data": handleServerResponse(http.StatusInternalServerError, "Backend Internal server erro", "", err.Error(), nil)})
 			return
 		}
-		context.JSON(http.StatusOK, gin.H{"code": 200, "status": "code was successfully sent to a user"})
+		context.JSON(http.StatusOK, gin.H{"data": handleServerResponse(http.StatusOK, "User transaction Pin changed successfully", "", nil, nil)})
 	}
 }
 
@@ -185,7 +186,7 @@ func (user UserServer) VerifyToken() gin.HandlerFunc {
 
 		authHeader := context.GetHeader("Authorization")
 		if authHeader == "" {
-			context.JSON(http.StatusUnauthorized, gin.H{"error": "Authorization header is required", "code": 401})
+			context.JSON(http.StatusUnauthorized, gin.H{"data": handleServerResponse(http.StatusUnauthorized, "Authorization header is required", "", nil, nil)})
 			context.Abort()
 			return
 		}
@@ -193,17 +194,17 @@ func (user UserServer) VerifyToken() gin.HandlerFunc {
 		// Extract the token from the Authorization header
 		tokenString := strings.TrimPrefix(authHeader, "Bearer ")
 		if tokenString == authHeader {
-			context.JSON(http.StatusUnauthorized, gin.H{"error": "Authorization header format must be Bearer {token}"})
+			context.JSON(http.StatusUnauthorized, gin.H{"data": handleServerResponse(http.StatusUnauthorized, "Authorization header format must be Bearer {token}", "", nil, nil)})
 			context.Abort()
 			return
 		}
 
 		//Call handler to process the request
 		if err := user.user.VerifyOtp(id, tokenString); err != nil {
-			context.JSON(http.StatusInternalServerError, gin.H{"code": 500, "status": "Internal server error", "error": err.Error()})
+			context.JSON(http.StatusInternalServerError, gin.H{"data": handleServerResponse(http.StatusInternalServerError, "Backend Internal server error", "", nil, nil)})
 			return
 		}
-		context.JSON(http.StatusOK, gin.H{"code": 200, "status": "Otp is verified"})
+		context.JSON(http.StatusOK, gin.H{"code": handleServerResponse(http.StatusOK, "OTP verified successfully", "", nil, nil)})
 	}
 }
 
@@ -213,15 +214,25 @@ func (user UserServer) VerifyBvn() gin.HandlerFunc {
 		var us model.User
 
 		if err := context.ShouldBindJSON(&us); err != nil {
-			context.JSON(http.StatusBadRequest, gin.H{"code": 400, "status": "Bad request", "error": err.Error()})
+			context.JSON(http.StatusBadRequest, gin.H{"data": handleServerResponse(http.StatusBadRequest, "User Invalid request", "", nil, nil)})
 			return
 		}
 
 		//Call handler to process the request
 		if err := user.user.VerifyBvn(id, &us); err != nil {
-			context.JSON(http.StatusInternalServerError, gin.H{"code": 500, "status": "Internal server error"})
+			context.JSON(http.StatusInternalServerError, gin.H{"data": handleServerResponse(http.StatusInternalServerError, "Backend Internal server error", "", nil, nil)})
 			return
 		}
-		context.JSON(http.StatusOK, gin.H{"status": "bvn was successfully verified", "code": 200})
+		context.JSON(http.StatusOK, gin.H{"data": handleServerResponse(http.StatusOK, "User BVN verified successfully", "", nil, nil)})
+	}
+}
+
+func handleServerResponse(code int, status, token string, error any, object *model.User) model.ServerResponse {
+	return model.ServerResponse{
+		Code:   code,
+		Status: status,
+		Object: object,
+		Error:  error,
+		Token:  token,
 	}
 }
