@@ -1,0 +1,419 @@
+definitions:
+  model.ChangePassword:
+    properties:
+      confirm_password:
+        type: string
+      current_password:
+        type: string
+      new_password:
+        type: string
+    type: object
+  model.ServerResponse:
+    properties:
+      code:
+        type: integer
+      data:
+        $ref: '#/definitions/model.User'
+      error: {}
+      status:
+        type: string
+      token:
+        type: string
+    type: object
+  model.TransactionPin:
+    properties:
+      confirm_new_pin:
+        type: integer
+      current_pin:
+        type: integer
+      new_pin:
+        type: integer
+    type: object
+  model.User:
+    properties:
+      IDType:
+        type: string
+      bvn:
+        type: string
+      confirm_password:
+        type: string
+      country:
+        type: string
+      date_of_birth:
+        type: string
+      document:
+        type: string
+      email:
+        type: string
+      first_name:
+        type: string
+      gender:
+        type: string
+      home_address:
+        type: string
+      id:
+        type: string
+      last_name:
+        type: string
+      password:
+        type: string
+      phone_number:
+        type: string
+      state:
+        type: string
+      status_ts:
+        type: string
+      transaction_code:
+        type: integer
+      ts:
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /user/change_password:
+    put:
+      description: changes user's existing password
+      parameters:
+      - description: User request data
+        in: body
+        name: model
+        required: true
+        schema:
+          $ref: '#/definitions/model.ChangePassword'
+      - description: ID
+        in: query
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.ServerResponse'
+            - properties:
+                code:
+                  type: integer
+                error:
+                  type: object
+                status:
+                  type: string
+                token:
+                  type: string
+              type: object
+      summary: changes user's existing password
+      tags:
+      - user
+  /user/change_pin:
+    put:
+      description: change user's transaction pin
+      parameters:
+      - description: User request data
+        in: body
+        name: model
+        required: true
+        schema:
+          $ref: '#/definitions/model.TransactionPin'
+      - description: ID
+        in: query
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.ServerResponse'
+            - properties:
+                code:
+                  type: integer
+                error:
+                  type: object
+                status:
+                  type: string
+                token:
+                  type: string
+              type: object
+      summary: change user's transaction pin
+      tags:
+      - user
+  /user/email_verification:
+    post:
+      description: Send Verification email
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.ServerResponse'
+            - properties:
+                code:
+                  type: integer
+                error:
+                  type: object
+                status:
+                  type: string
+                token:
+                  type: string
+              type: object
+      summary: Send Verification email
+      tags:
+      - user
+  /user/forgot_password:
+    put:
+      description: sends user forgot password 6 digits code
+      parameters:
+      - description: User request data
+        in: body
+        name: model
+        required: true
+        schema:
+          $ref: '#/definitions/model.User'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.ServerResponse'
+            - properties:
+                code:
+                  type: integer
+                error:
+                  type: object
+                status:
+                  type: string
+                token:
+                  type: string
+              type: object
+      summary: send user forgot password 6 digits code
+      tags:
+      - user
+  /user/login:
+    post:
+      description: Login user
+      parameters:
+      - description: User request data
+        in: body
+        name: model
+        required: true
+        schema:
+          $ref: '#/definitions/model.User'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.ServerResponse'
+            - properties:
+                code:
+                  type: integer
+                error:
+                  type: object
+                status:
+                  type: string
+                token:
+                  type: string
+              type: object
+      summary: Login user
+      tags:
+      - user
+  /user/secure_transaction:
+    post:
+      description: Secures user`s transaction pin
+      parameters:
+      - description: User request data
+        in: body
+        name: model
+        required: true
+        schema:
+          $ref: '#/definitions/model.User'
+      - description: ID
+        in: query
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.ServerResponse'
+            - properties:
+                code:
+                  type: integer
+                error:
+                  type: object
+                status:
+                  type: string
+                token:
+                  type: string
+              type: object
+      summary: Secures user`s transaction pin
+      tags:
+      - user
+  /user/signup:
+    post:
+      description: Create a user
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.ServerResponse'
+            - properties:
+                code:
+                  type: integer
+                error:
+                  type: object
+                status:
+                  type: string
+                token:
+                  type: string
+              type: object
+      summary: Create a user
+      tags:
+      - user
+  /user/update_record:
+    put:
+      description: Updates user's existing record
+      parameters:
+      - description: User request data
+        in: body
+        name: model
+        required: true
+        schema:
+          $ref: '#/definitions/model.User'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.ServerResponse'
+            - properties:
+                code:
+                  type: integer
+                error:
+                  type: object
+                status:
+                  type: string
+                token:
+                  type: string
+              type: object
+      summary: Updates user's existing record
+      tags:
+      - user
+  /user/verify_bvn:
+    post:
+      description: verify user's bvn
+      parameters:
+      - description: ID
+        in: query
+        name: id
+        required: true
+        type: string
+      - description: User request data
+        in: body
+        name: model
+        required: true
+        schema:
+          $ref: '#/definitions/model.User'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.ServerResponse'
+            - properties:
+                code:
+                  type: integer
+                error:
+                  type: object
+                status:
+                  type: string
+                token:
+                  type: string
+              type: object
+      summary: verify user's bvn
+      tags:
+      - user
+  /user/verify_phone_number:
+    post:
+      description: verify user's number
+      parameters:
+      - description: ID
+        in: query
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.ServerResponse'
+            - properties:
+                code:
+                  type: integer
+                error:
+                  type: object
+                status:
+                  type: string
+                token:
+                  type: string
+              type: object
+      summary: verify user's number
+      tags:
+      - user
+  /user/verify_token:
+    post:
+      description: verify user's token
+      parameters:
+      - description: ID
+        in: query
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.ServerResponse'
+            - properties:
+                code:
+                  type: integer
+                error:
+                  type: object
+                status:
+                  type: string
+                token:
+                  type: string
+              type: object
+      summary: verify user's token
+      tags:
+      - user
+swagger: "2.0"

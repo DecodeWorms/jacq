@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 	"jacq/config"
 	"jacq/encrypt"
 	handler2 "jacq/handler"
@@ -35,17 +37,21 @@ func main() {
 	server := server2.NewUserServer(&handler)
 
 	router := gin.Default()
-	router.POST("/signup", server.SignUp())
-	router.POST("/email_verification", server.SendVerificationEmail())
-	router.PUT("/update_record", server.UpdateUser())
-	router.PUT("/secure_transaction", server.SecureTransaction())
-	router.POST("/login", server.Login())
-	router.POST("/forgot_password", server.ForgotPassword())
-	router.PUT("/change_password", server.ChangePassword())
-	router.POST("/verify_phone_number", server.VerifyPhoneNumber())
-	router.PUT("/change_pin", server.ChangeTransactionPin())
-	router.POST("/verify_token", server.VerifyToken())
-	router.POST("/verify_bvn", server.VerifyBvn())
+
+	// Swagger endpoint
+	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+
+	router.POST("user/signup", server.SignUp())
+	router.POST("user/email_verification", server.SendVerificationEmail())
+	router.PUT("user/update_record", server.UpdateUser())
+	router.PUT("user/secure_transaction", server.SecureTransaction())
+	router.POST("user/login", server.Login())
+	router.POST("user/forgot_password", server.ForgotPassword())
+	router.PUT("user/change_password", server.ChangePassword())
+	router.POST("user/verify_phone_number", server.VerifyPhoneNumber())
+	router.PUT("user/change_pin", server.ChangeTransactionPin())
+	router.POST("user/verify_token", server.VerifyToken())
+	router.POST("user/verify_bvn", server.VerifyBvn())
 
 	//Graceful shut down
 	interruptHandler := make(chan os.Signal, 1)
